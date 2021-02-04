@@ -1,8 +1,7 @@
 from flask import Flask, request
 import telegram
-import credentials
 from web_server import create_app
-from eusoffbot import URL, reset_key, bot_token, bot_user_name
+from eusoffbot.credentials import URL, reset_key, bot_token, bot_user_name
 
 # https://api.telegram.org/bot1359229669:AAEm8MG26qbA9XjJyojVKvPI7jAdMVqAkc8/getMe
 
