@@ -79,6 +79,18 @@ def reset_update():
     else:
         return "reset hook setup failed"
 
+@app.route('/dropwebhook', methods=['GET'])
+def drop_webhook():
+    """
+    Stops the webhook from polling the server and drops all pending requests
+    """
+    s = bot.deleteWebhook(drop_pending_updates=True)
+
+    if s:
+        return "web hook delete success"
+    else:
+        return "web hook delete failure"
+
 if __name__ == '__main__':
     # note the threaded arg which allow
     # your app to have more than one thread
