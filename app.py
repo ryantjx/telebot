@@ -1,15 +1,14 @@
 from flask import Flask, request
 import telegram
+from moneyGooseBot.master_mind import mainCommandHandler
+from moneyGooseBot.credentials import URL, reset_key, bot_token, bot_user_name
+
 from web_server import create_app
-from eusoffbot.credentials import URL, reset_key, bot_token, bot_user_name
 
 # https://api.telegram.org/bot1359229669:AAEm8MG26qbA9XjJyojVKvPI7jAdMVqAkc8/getMe
 
-RESETKEY = reset_key
 
-TOKEN = bot_token
-
-bot = telegram.Bot(token=TOKEN)
+bot = telegram.Bot(token=bot_token)
 
 app = create_app()
 
@@ -25,32 +24,8 @@ def respond():
         print("some error has occured internally")
 
     if update.message:
-        chat_id = update.message.chat.id
-        msg_id = update.message.message_id
-        user = update.message.from_user 
-        try:
-            text = update.message.text.encode('utf-8').decode()
-        except:
-            print("no text in the message")
-        try:
-            info = "got text message: " + text + " from " + user.username
-            print(info)
-        except:
-            print("no message is received")
-
-        # response = getResponse(update.message)
+        mainCommandHandler(incoming_message = update.messagem, telebot_instance = bot)
         
-        # if response.has_markup:
-        #     try:
-        #         bot.sendMessage(chat_id=chat_id, text=response.text, reply_to_message_id=msg_id, reply_markup=response.reply_markup)
-        #     except:
-        #         print("message is lost, bot has no target to reply")
-        # else:
-        try:
-            bot.sendMessage(chat_id=chat_id, text="Hello I am goose", reply_to_message_id=msg_id)
-        except:
-            print("message is lost, bot has no target to reply")
-
     return 'ok'
 
 @app.route('/{}'.format(RESETKEY), methods=['POST'])
@@ -61,7 +36,7 @@ def reset():
 def set_webhook():
     # we use the bot object to link the bot to our app which live
     # in the link provided by URL
-    s = bot.setWebhook('{URL}{HOOK}'.format(URL=URL, HOOK=TOKEN))
+    s = bot.setWebhook('{URL}{HOOK}'.format(URL=URL, HOOK=bot_token))
     # something to let us know things work
     if s:
         return "webhook setup ok"
@@ -73,7 +48,7 @@ def reset_update():
     """
     Really a temprorary method to keep the update from flooding
     """
-    s = bot.setWebhook('{URL}{RESET}'.format(URL=URL, RESET=RESETKEY))
+    s = bot.setWebhook('{URL}{RESET}'.format(URL=URL, RESET=reset_key))
     if s:
         return "reset hook setup ok"
     else:
